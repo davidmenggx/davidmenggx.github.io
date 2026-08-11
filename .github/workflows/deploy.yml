@@ -1,0 +1,44 @@
+name: Deploy to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Let a running deploy finish rather than cancelling it midway.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Substitutes into the copy being deployed only; the repo is untouched,
+      # so this never commits back and cannot loop.
+      - name: Stamp last commit date into index.html
+        run: |
+          DATE=$(date -u -d "$(git log -1 --format=%cI)" +"%B %-d, %Y")
+          grep -q '__LAST_UPDATED__' index.html \
+            || { echo "::error::__LAST_UPDATED__ placeholder missing from index.html"; exit 1; }
+          sed -i "s/__LAST_UPDATED__/$DATE/" index.html
+          echo "Stamped: $DATE"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

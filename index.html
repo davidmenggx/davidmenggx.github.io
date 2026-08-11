@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>David Meng</title>
+<meta name="description" content="Personal site of David Meng.">
+<link rel="stylesheet" href="style.css">
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    var dark = saved ? saved === 'dark'
+                     : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+</script>
+</head>
+<body>
+
+<button id="theme-toggle" type="button" hidden></button>
+
+<h1>David Meng</h1>
+
+<img id="portrait" src="assets/portraits/portrait1.jpg" alt="David Meng" width="480" height="480">
+<div id="portrait-caption" hidden></div>
+
+<script>
+  (function () {
+    // TODO: Make sure to update this when adding/removing portraits.
+    // A first-time visitor always gets PORTRAITS[0]
+    var PORTRAITS = [
+      { src: 'assets/portraits/portrait1.jpg',  caption: 'Casa Batlló. Barcelona, Spain.' },
+      { src: 'assets/portraits/portrait2.jpg', caption: 'Pacifica, California.' },
+      { src: 'assets/portraits/portrait3.jpg', caption: 'Volcanoes National Park, Hawaii.' },
+      { src: 'assets/portraits/portrait4.jpg', caption: 'Chicago, Illinois.' },
+    ];
+
+    var img = document.getElementById('portrait');
+    var tip = document.getElementById('portrait-caption');
+
+    var KEY = 'portrait-deck';
+    var state = null;
+    var firstVisit = false;
+    try {
+      var raw = localStorage.getItem(KEY);
+      firstVisit = raw === null;
+      state = JSON.parse(raw);
+    } catch (e) {}
+    if (!state || !Array.isArray(state.deck)) state = { deck: [], last: -1 };
+
+    state.deck = state.deck.filter(function (i) {
+      return typeof i === 'number' && i >= 0 && i < PORTRAITS.length;
+    });
+
+    if (!state.deck.length) {
+      for (var i = 0; i < PORTRAITS.length; i++) state.deck.push(i);
+      var from = firstVisit ? 1 : 0;
+      for (var i = state.deck.length - 1; i > from; i--) {   // Fisher-Yates
+        var j = from + Math.floor(Math.random() * (i - from + 1));
+        var t = state.deck[i]; state.deck[i] = state.deck[j]; state.deck[j] = t;
+      }
+      if (state.deck.length > 1 && state.deck[0] === state.last) {
+        var k = 1 + Math.floor(Math.random() * (state.deck.length - 1));
+        state.deck[0] = state.deck[k]; state.deck[k] = state.last;
+      }
+    }
+
+    var next = state.deck.shift();
+    var pick = PORTRAITS[next];
+    state.last = next;
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+
+    img.src = pick.src;
+    tip.textContent = pick.caption;
+
+    function place(e) {
+      var x = e.clientX + 14;
+      var y = e.clientY + 16;
+      if (x + tip.offsetWidth > window.innerWidth - 8) x = e.clientX - tip.offsetWidth - 14;
+      if (y + tip.offsetHeight > window.innerHeight - 8) y = e.clientY - tip.offsetHeight - 16;
+      tip.style.left = x + 'px';
+      tip.style.top = y + 'px';
+    }
+
+    img.addEventListener('mouseenter', function (e) { tip.hidden = false; place(e); });
+    img.addEventListener('mousemove', place);
+    img.addEventListener('mouseleave', function () { tip.hidden = true; });
+  })();
+</script>
+
+<p>
+  CS and applied math undergrad at UC Berkeley. Interested in distributed systems, systems programming, and <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a>.
+  <br>
+  Currently thinking about evals and long-context at <a href="https://bair.berkeley.edu/">Berkeley AI Research</a>. 
+  <br>
+  Joining <a href="https://www.citadel.com/">Citadel</a> as a software engineer intern next summer (2027).
+</p>
+
+<p>
+  Email: <a href="mailto:davidmenggx@gmail.com">davidmenggx@gmail.com</a><br>
+  GitHub: <a href="https://github.com/davidmenggx">github.com/davidmenggx</a><br>
+  LinkedIn: <a href="https://www.linkedin.com/in/davidmenggx">linkedin.com/in/davidmenggx</a><br>
+  <!-- TODO: add resume -->
+  <!-- Resume: <a href="assets/resume.pdf">resume.pdf</a> -->
+</p>
+
+<!-- Blogs coming soon, maybe. -->
+
+<p id="updated">
+  <a href="https://github.com/davidmenggx/davidmenggx.github.io">Last updated: __LAST_UPDATED__</a>
+</p>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var button = document.getElementById('theme-toggle');
+
+    function render() {
+      var dark = root.dataset.theme === 'dark';
+      button.textContent = dark ? 'light' : 'dark';
+      button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+      button.setAttribute('aria-pressed', String(dark));
+    }
+
+    button.addEventListener('click', function () {
+      var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      render();
+    });
+
+    render();
+    button.hidden = false;
+  })();
+</script>
+
+</body>
+</html>
