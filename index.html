@@ -10,9 +10,7 @@
   (function () {
     var saved = null;
     try { saved = localStorage.getItem('theme'); } catch (e) {}
-    var dark = saved ? saved === 'dark'
-                     : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document.documentElement.dataset.theme = saved === 'dark' ? 'dark' : 'light';
   })();
 </script>
 </head>
@@ -22,7 +20,7 @@
 
 <h1>David Meng</h1>
 
-<img id="portrait" src="assets/portraits/portrait1.jpg" alt="David Meng" width="480" height="480">
+<img id="portrait" src="assets/portraits/portrait1.jpg" alt="David Meng">
 <div id="portrait-caption" hidden></div>
 
 <script>
@@ -93,11 +91,17 @@
 </script>
 
 <p>
-  CS and applied math undergrad at UC Berkeley. Interested in distributed systems, systems programming, and <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a>.
+  Computer science and applied math undergrad at UC Berkeley.
   <br>
-  Currently working on post-training and alignment at <a href="https://bair.berkeley.edu/">Berkeley AI Research</a>. 
+  Currently working on post-training at <a href="https://bair.berkeley.edu/">Berkeley AI Research</a>. 
   <br>
   Joining <a href="https://www.citadel.com/">Citadel</a> as a software engineer intern next summer (2027).
+</p>
+
+<p>
+  Some of my interests include: distributed systems, databases, compilers, networking, ML infrastructure, <a href="https://en.wikipedia.org/wiki/Mechanistic_interpretability">mechanistic interpretability</a>, and <a href="https://en.wikipedia.org/wiki/Formal_methods">formal methods</a>.
+  <br>
+  I also enjoy <a href="recommendations.html">puzzle and trivia games, podcasts, and reading</a>.
 </p>
 
 <p>

@@ -26,13 +26,15 @@ jobs:
 
       # Substitutes into the copy being deployed only; the repo is untouched,
       # so this never commits back and cannot loop.
-      - name: Stamp last commit date into index.html
+      - name: Stamp last commit date into HTML pages
         run: |
           DATE=$(date -u -d "$(git log -1 --format=%cI)" +"%B %-d, %Y")
-          grep -q '__LAST_UPDATED__' index.html \
-            || { echo "::error::__LAST_UPDATED__ placeholder missing from index.html"; exit 1; }
-          sed -i "s/__LAST_UPDATED__/$DATE/" index.html
-          echo "Stamped: $DATE"
+          FILES=$(grep -rl '__LAST_UPDATED__' --include='*.html' .)
+          [ -n "$FILES" ] \
+            || { echo "::error::__LAST_UPDATED__ placeholder not found in any .html file"; exit 1; }
+          echo "$FILES" | xargs sed -i "s/__LAST_UPDATED__/$DATE/"
+          echo "Stamped $DATE into:"
+          echo "$FILES"
 
       - uses: actions/configure-pages@v5
 

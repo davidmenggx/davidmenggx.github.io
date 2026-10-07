@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recommendations &mdash; David Meng</title>
+<meta name="description" content="Podcast and book recommendations from David Meng.">
+<link rel="stylesheet" href="style.css">
+<script>
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    document.documentElement.dataset.theme = saved === 'dark' ? 'dark' : 'light';
+  })();
+</script>
+</head>
+<body>
+
+<button id="theme-toggle" type="button" hidden></button>
+
+<p>
+  <a href="index.html">Go back home</a>.
+</p>
+
+<h2>Podcasts</h2>
+<ul>
+  <li><a href="https://www.bloomberg.com/account/newsletters/money-stuff">Money Stuff with Matt Levine</a></li>
+  <li><a href="https://www.twoscomplement.org/">Two's Complement</a></li>
+</ul>
+
+<h2>Books</h2>
+<ul>
+  <li>Slaughterhouse-Five - Kurt Vonnegut</li>
+  <li>Pale Fire - Vladimir Nabokov</li>
+  <li>Designing Data-Intensive Applications - Martin Kleppmann</li>
+  <li>Why Machines Learn - Anil Ananthaswamy</li>
+</ul>
+
+<h2>Games</h2>
+<ul>
+  <li><a href="https://www.linkedin.com/games/queens/">Queens</a></li>
+  <li><a href="https://wordwormdormdork.com/weaver/">Weaver</a></li>
+  <li><a href="https://fermi.gg/">Fermi.gg</a></li>
+  <li><a href="https://krillion.io/">Krillion</a></li>
+  <li><a href="https://www.geoguessr.com/">GeoGuessr</a></li>
+  <li><a href="https://globle-game.com/game">Globle</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Minesweeper_(video_game)">Minesweeper</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Bloons_Tower_Defense">Bloons Tower Defense</a></li>
+</ul>
+
+<p id="updated">
+  <a href="https://github.com/davidmenggx/davidmenggx.github.io">Last updated: __LAST_UPDATED__</a>
+</p>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var button = document.getElementById('theme-toggle');
+
+    function render() {
+      var dark = root.dataset.theme === 'dark';
+      button.textContent = dark ? 'light' : 'dark';
+      button.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+      button.setAttribute('aria-pressed', String(dark));
+    }
+
+    button.addEventListener('click', function () {
+      var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch (e) {}
+      render();
+    });
+
+    render();
+    button.hidden = false;
+  })();
+</script>
+
+</body>
+</html>
